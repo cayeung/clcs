@@ -1,0 +1,5 @@
+cylic longest common sequence
+
+clcs-slow.cpp runs iterations over the length of A
+
+clcs-fast.cpp runs graph and djistrka
