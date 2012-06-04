@@ -173,7 +173,14 @@ void findShortestPaths(int lower, int upper) {
 int getShortestPathLength() {
   int min = numeric_limits<int>::max();
   for (int i = 0; i < 2000; i++) {
-    //iterate through array and find cheapest path
+    if (&paths[i] == NULL) break; 
+    int length = 0;
+    for (forwardPath *fp = &paths[i]; fp != NULL; fp = fp->child) {
+      length++; 
+    }
+    if (length < min) {
+      min = length;
+    }
   }
   return min;
 }
