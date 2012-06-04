@@ -177,24 +177,26 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   }
   
   //iterates through all the vertices from the start to the end between the upper and lower bounds. calculates the cost of the adjacent nodes and if the cost is greater than the cost of the current node + 1, replaces the cost. 
-  new_grid[start][0].x=start;
-  new_grid[start][0].y=0;
-  new_grid[start][0].cost=0;
   for (int i = start; i < aLen+start+1; i++) {
     if (l.x != -1){
-      while (l.x == i) { //infinite loop here with METROMINDANDMEGAMIND / MEGAMINDANDMETROMIND test
-        if (l.child !=NULL)
-          l = *(l.child);
-        else {
-          l.y=B.length();
-          break; //added to attempt to break infinite loop
-        }
+      
+      while (l.child !=NULL){
+        if (l.child->x ==i)
+          l=*(l.child);
       }
-      if (upper.x!=-1){
-        while (upper.x==i) {
-          if (upper.child == NULL) break; //added
-          upper = *(upper.child);
-        }
+    }
+    /*     while (l.x == i) { //infinite loop here with METROMINDANDMEGAMIND / MEGAMINDANDMETROMIND test
+     if (l.child !=NULL)
+     l = *(l.child);
+     else {
+     l.y=B.length();
+     break; //added to attempt to break infinite loop
+     }
+     }*/
+    if (upper.x!=-1){
+      while (upper.x==i) {
+        if (upper.child == NULL) break; //added
+        upper = *(upper.child);
       }
     }
     if (lowerbound==0)
@@ -205,7 +207,6 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
       ubound = 0;
     else
       ubound=upper.y;
-
     for (int j=ubound; j<=lbound; j++) {
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + 1) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + 1;
@@ -215,7 +216,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
       if (new_grid[i][j+1].cost > new_grid[i][j].cost + 1) {
         new_grid[i][j+1].cost = new_grid[i][j].cost + 1;
         new_grid[i][j+1].parent = &new_grid[i][j];
-        cout <<"two"<< i <<" "<< " "<<j+1 << new_grid[i][j+1].cost << endl;
+        cout <<"two"<< i <<" "<<j+1<< " "<< new_grid[i][j+1].cost << endl;
       }
       if ((new_grid[i+1][j+1].cost > new_grid[i][j].cost + 1) && matrix[i][j] == 1) {
         new_grid[i+1][j+1].cost = new_grid[i][j].cost + 1;
@@ -263,7 +264,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
  */
 void findShortestPaths(int lower, int upper) {
   if ((upper - lower) <= 1){
-    paths[lower]=singleShortestPath(lower, &paths[lower], &paths[upper]);
+    paths[lower]=singleShortestPath(lower, &paths[upper], &paths[lower]);
     return;
   }
   int mid = (lower + upper) / 2;
@@ -279,7 +280,6 @@ int getShortestPathLength() {
     if (paths[i].x != -1) {
       int length = paths[i].cost;
       if (length < min) {
-        cout << "min found "<<i;
         min = length;
       }
     }
