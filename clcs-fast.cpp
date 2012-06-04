@@ -16,8 +16,8 @@ struct forwardPath {
   int x,y;
 };
 
-forwardPath paths[2001];
-int matrix[4001][2001];
+forwardPath paths[2000];
+int matrix[4001][2000];
 int aLen, bLen;
 string A, B;
 GridPoint new_grid[4000][2000];
@@ -115,11 +115,11 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     initializelower(lowerPath);
     initializeUpper(upperPath);
   }
-  
+
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
   for (int i = start; i < aLen; i++) {
-    for (int j = 0; i< bLen; j++) {
+    for (int j = 0; j< bLen; j++) {
       GridPoint vertex;
       vertex.cost = numeric_limits<int>::max();
       vertex.parent = NULL;
@@ -134,9 +134,6 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   
   forwardPath l;
   forwardPath curr = *lowerPath;
-
-  cout << lowerPath->child->child->x;
-  exit(1);
   
   while (true) {
     cout << curr.x;
@@ -230,7 +227,7 @@ void findShortestPaths(int lower, int upper) {
 
 int getShortestPathLength() {
   int min = numeric_limits<int>::max();
-  for (int i = 0; i < 2001; i++) {
+  for (int i = 0; i < 2000; i++) {
     if (&paths[i] == NULL) break; 
     int length = 0;
     for (forwardPath *fp = &paths[i]; fp != NULL; fp = fp->child) {
@@ -248,7 +245,7 @@ int main() {
   aLen = (int) A.length();
   bLen = (int) B.length(); 
   initializeMatrix();
-  for (int i = 0; i < 2001; i++) {
+  for (int i = 0; i < 2000; i++) {
     forwardPath temp;
     temp.x = -1;
     paths[i] = temp;
