@@ -68,11 +68,21 @@ forwardPath * reverseList(GridPoint *gp) {
  else matrix = 0
  */
 void initializeMatrix() {
-    for (int i=0; i < (aLen*2); i++) {
+    for (int i=0; i < (aLen); i++) {
         for (int j=0; j < bLen; j++) {
             if (A[i]==B[j]) {
                 matrix[i][j]=1;
             } else { 
+                matrix[i][j]=0;
+            }
+        }
+    }
+    for (int i=aLen; i<(aLen*2); i++){
+        for (int j=0; j<bLen; j++){
+            if (A[i-aLen]==B[j]){
+                matrix[i][j]=1;
+            }
+            else {
                 matrix[i][j]=0;
             }
         }
@@ -288,7 +298,9 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
 void findShortestPaths(int lower, int upper) {
     if ((upper - lower) <= 1){
         if (paths[lower].child==NULL)
-            paths[lower]=singleShortestPath(lower, &paths[upper], &paths[lower]);
+            paths[lower]=singleShortestPath(lower, &paths[lower], &paths[upper]);
+        else if (paths[upper].child==NULL)
+            paths[upper]=singleShortestPath(upper,&paths[lower], &paths[upper]);
         return;
     }
     int mid = (lower + upper) / 2;
