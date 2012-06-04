@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <stack>
 
 using namespace std;
 
@@ -17,26 +18,44 @@ struct forwardPath {
 
 forwardPath paths[2000];
 int matrix[4000][2000];
+int aLen, bLen;
 string A, B;
 
-/*
- not sure if we need to initialize this shit as instance variables
- string A, B;
- GridPoint grid[2000][4000];
- string paths[2000];
- */
+forwardPath * copyToPath(GridPoint *gp) {
+  forwardPath *fp = NULL;
+  fp->x = gp->x;
+  fp->y = gp->y;
+  return fp;
+}
+
+/* reverses path of GridPoints and converts it to
+forward path of forwardPaths */
+forwardPath * reverseList(GridPoint *gp) {
+  stack<GridPoint*> gpStack; 
+  gpStack.push(gp);
+  GridPoint *next = gp->parent;
+  while (next->parent != NULL) {
+    gpStack.push(next);
+    next = next->parent; 
+  }
+  GridPoint *firstGP = gpStack.top();
+  gpStack.pop();
+  forwardPath *pathHead = copyToPath(firstGP);
+  for (forwardPath *fp  = pathHead; !gpStack.empty(); fp = fp->child) {
+    GridPoint *next_gp = gpStack.top(); 
+    gpStack.pop();
+    fp->child = copyToPath(next_gp);
+  }
+  return pathHead;
+}
 
 /* 
  initializes matrix and uses binary value to represent whether A and B match
  at specific spot 
  */
 void initializeMatrix() {
-  /*
-   int a_length = A.length();
-   int b_length = B.length();
-   int matrix[4000][2000] = new int[a_length][b_length]; */ // cant use new on 2d array
-  for (int i=0; i< (A.length()*2); i++) {
-    for (int j=0; j< (B.length()); j++) {
+  for (int i=0; i < (aLen*2); i++) {
+    for (int j=0; j < bLen; j++) {
       if (A[i]==B[j]) {
         matrix[i][j]=1;
       } else { 
@@ -53,8 +72,8 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
   GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
-  for (int i = start; i < A.length(); i++) {
-    for (int j = 0; i<B.length(); j++) {
+  for (int i = start; i < aLen; i++) {
+    for (int j = 0; i< bLen; j++) {
       GridPoint vertex;
       vertex.cost = numeric_limits<int>::max();
       vertex.parent = NULL;
@@ -84,7 +103,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
   upper = head;
   
   
-  for (int i = start; i < A.length(); i++) {
+  for (int i = start; i < aLen; i++) {
     while (lower.x == i) {
       if (lower.child !=NULL)
         lower = *(lower.child);
@@ -96,6 +115,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
       upper = *(upper.child);
     }
     for (int j=upper.y; j<lower.y; j++) {
+
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + matrix[i+1][j]) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
         new_grid[i+1][j].parent = &new_grid[i][j];
@@ -108,7 +128,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
         new_grid[i+1][j+1].cost = new_grid[i+1][j+1].cost + matrix[i+1][j+1];
         new_grid[i+1][j+1].parent = &new_grid[i][j];
       }
-      if (j==A.length()-1) 
+      if (j==aLen-1) 
         break;
     }
     if (lower.child !=NULL)
@@ -126,11 +146,12 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
   
   GridPoint shortestPath;
   shortestPath.cost = numeric_limits<int>::max();
-  
-  for (int j = 0; j < B.length(); j++) {
+
+
+  for (int j = 0; j < bLen; j++) {
     
-    if (new_grid[A.length()-1][j].cost < shortestPath.cost) 
-      shortestPath = new_grid[A.length()-1][j];
+    if (new_grid[aLen-1][j].cost < shortestPath.cost) 
+      shortestPath = new_grid[aLen-1][j];
     
   }
   
@@ -161,14 +182,11 @@ int getShortestPathLength() {
 
 int main() {
   cin >> A >> B;
+  aLen = (int) A.length();
+  bLen = (int) B.length(); 
   initializeMatrix();
+  findShortestPaths(aLen, bLen);
   cout << getShortestPathLength() << endl;
   return 0;
 }
 
-/* 
- potential optimizations:
- -if the number of diagonals that youve checked in your shortest path is already more than the number of diagonals left in your edge cases, then you can stop
- -split as evenly as possible
- -don't clear graph, just initialize a new one with nulls?
- */
