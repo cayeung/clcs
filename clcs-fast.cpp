@@ -13,7 +13,6 @@ struct GridPoint {
 struct forwardPath {
   forwardPath *child;
   int x,y;
-  int endX, endY;
 };
 
 forwardPath paths[2000];
@@ -68,9 +67,8 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
   new_grid[start][0].cost = 0;
   
   forwardPath lower;
-  forwardPath curr;
+  forwardPath curr = lowerPath;
   while (true) {
-    curr = lowerPath;
     if (curr.x == start) {
       lower = curr;
       break;
@@ -78,17 +76,26 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
     curr = *(curr.child);
   }
   forwardPath upper = upperPath;
-  if (upper.x != start) {
-    forwardPath head;
-    head.x = A.length();
-    head.y = 0;
-    head.child = &upperPath;
-    upper = head;
-  }
+  
+  forwardPath head;
+  head.x = upperPath.x;
+  head.y = 0;
+  head.child = &upperPath;
+  upper = head;
+  
   
   for (int i = start; i < A.length(); i++) {
-    int j=upper.y;
-    while (j < lower.y) {
+    while (lower.x == i) {
+      if (lower.child !=NULL)
+        lower = *(lower.child);
+      else {
+        lower.y=B.length();
+      }
+    }
+    while (upper.x==i) {
+      upper = *(upper.child);
+    }
+    for (int j=upper.y; j<lower.y; j++) {
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + matrix[i+1][j]) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
         new_grid[i+1][j].parent = &new_grid[i][j];
@@ -101,29 +108,25 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
         new_grid[i+1][j+1].cost = new_grid[i+1][j+1].cost + matrix[i+1][j+1];
         new_grid[i+1][j+1].parent = &new_grid[i][j];
       }
-      while (lower.x == i) {
-        if (lower.child !=NULL)
-          lower = *(lower.child);
-        else {
-          lower.y=B.length();
-          lower.child = &lower;
-        }
-      }
-      while (upper.x==i) {
-        upper = *(upper.child);
-      }
-      j=upper.y;
-      
+      if (j==A.length()-1) 
+        break;
     }
+    if (lower.child !=NULL)
+      lower=*(lower.child);
+    else 
+      lower.x=lower.x+1;
     
-    if (j==A.length()) 
-      break;
+    if (upper.child !=NULL)
+      upper=*(upper.child);
+    
+    
 
+    
   }
   
   GridPoint shortestPath;
   shortestPath.cost = numeric_limits<int>::max();
-
+  
   for (int j = 0; j < B.length(); j++) {
     
     if (new_grid[A.length()-1][j].cost < shortestPath.cost) 
