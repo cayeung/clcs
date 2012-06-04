@@ -44,7 +44,7 @@ void initializeMatrix() {
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
-GridPoint singleShortestPath(int start, GridPoint* lower, GridPoint* upper) {
+GridPoint singleShortestPath(int start, GridPoint lower, GridPoint upper) {
   GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
