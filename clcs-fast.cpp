@@ -66,6 +66,7 @@ void initializeMatrix() {
   }
 }
 
+//if the lower path does not exist, build the path along the midline down to the end corner
 void initializelower(forwardPath* lower, int start) {
   
   forwardPath *head = lower;
@@ -86,6 +87,7 @@ void initializelower(forwardPath* lower, int start) {
   
 }
 
+//if upper path does not exist, builds a path along the left boundary to the bottom
 void initializeUpper(forwardPath *upper, int start) {
   forwardPath *node = upper;
   for (int k = start; k < aLen+start; k++) {
@@ -132,6 +134,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
 
   new_grid[start][0].cost = 0;
   
+  //traverses the linked list of the lower path to find the node in the path with the row start
   forwardPath l;
   forwardPath curr = *lowerPath;
   
@@ -143,6 +146,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     curr = *(curr.child);
   }
   
+  //traverses the upper path and builds a dummy head 
   forwardPath upper = *upperPath;
   
   forwardPath trav;
@@ -151,7 +155,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   trav.child = upperPath;
   upper = trav;
 
-  
+  //iterates through all the vertices from the start to the end between the upper and lower bounds. calculates the cost of the adjacent nodes and if the cost is greater than the cost of the current node + 1, replaces the cost. 
   for (int i = start; i < aLen+start; i++) {
     while (l.x == i) {
       if (l.child !=NULL)
@@ -193,7 +197,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     
   }
  
-  
+  //finds the shortest path and returns the forward version (from source to destination)
   GridPoint shortestPath;
   shortestPath = new_grid[start+aLen-1][bLen-1];
   cout << shortestPath.x << " " << shortestPath.y << endl;
