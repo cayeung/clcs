@@ -178,9 +178,9 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   
   //iterates through all the vertices from the start to the end between the upper and lower bounds. calculates the cost of the adjacent nodes and if the cost is greater than the cost of the current node + 1, replaces the cost. 
   for (int i = start; i < aLen+start+1; i++) {
-    if (l.x != -1){
+    if (l.x != -1){  //if you comment this out and comment in the other while loop, should run but not work
       
-      while (l.child !=NULL){
+      while (l.child !=NULL){  
         if (l.child->x ==i)
           l=*(l.child);
       }
