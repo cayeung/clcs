@@ -71,7 +71,7 @@ pqueue::cmp_node(node* fst, node *snd)
 
 int pqueue::get_parent(int current) { return ((current-1)/2) }
 int pqueue::get_left  (int current) { return ((current+1)*2 -1) }
-int pqueue::get_right (int current) { reutrn ((curretn+1)*2) }
+int pqueue::get_right (int current) { return ((curretn+1)*2) }
 
 void
 pqueue::push(node *new_node)
@@ -115,6 +115,7 @@ node
         right= get_right(current);
 
    }
+   return result;
 
 
 }
@@ -168,3 +169,5 @@ dg_matrix::~dg_matrix()
     free(stringn);
     free(graph_mat);
 }
+
+
