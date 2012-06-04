@@ -240,21 +240,21 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
           //bottom adjacent edge
             if (new_grid[i+1][j].cost > new_grid[i][j].cost + 1) {
                 new_grid[i+1][j].cost = new_grid[i][j].cost + 1;
-                cout << "one" <<i+1 <<" "<< j <<" "<< new_grid[i+1][j].cost << endl;
+                //cout << "one" <<i+1 <<" "<< j <<" "<< new_grid[i+1][j].cost << endl;
                 new_grid[i+1][j].parent = &new_grid[i][j];
             }
           //right adjacent edge
             if (new_grid[i][j+1].cost > new_grid[i][j].cost + 1) {
                 new_grid[i][j+1].cost = new_grid[i][j].cost + 1;
                 new_grid[i][j+1].parent = &new_grid[i][j];
-                cout <<"two"<< i <<" "<<j+1<< " "<< new_grid[i][j+1].cost << endl;
+                //cout <<"two"<< i <<" "<<j+1<< " "<< new_grid[i][j+1].cost << endl;
             }
           
           //diagonal (only checks if the two letters are matching
             if ((new_grid[i+1][j+1].cost > new_grid[i][j].cost + 1) && matrix[i][j] == 1) {
                 new_grid[i+1][j+1].cost = new_grid[i][j].cost + 1;
                 new_grid[i+1][j+1].parent = &new_grid[i][j];
-                cout <<"three"<< i+1 <<" "<< j+1 <<" "<< new_grid[i+1][j+1].cost << endl;
+                //cout <<"three"<< i+1 <<" "<< j+1 <<" "<< new_grid[i+1][j+1].cost << endl;
             }
             if (j==bLen) 
                 break;
@@ -278,7 +278,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     //cout << shortestPath.x << " " << shortestPath.y << endl;
     
     forwardPath *answer = reverseList(&shortestPath);
-    cout << "----------" << endl;
+    //cout << "----------" << endl;
     
     forwardPath *newHead = answer;
     /*
@@ -320,10 +320,13 @@ int getShortestPathLength() {
             }
         }
     }
-    return min;
+    return (aLen + bLen - min);
 }
 
 int main() {
+  int T;
+  cin >> T;
+  for (int tc = 0; tc < T; tc++) {
     cin >> A >> B;
     aLen = (int) A.length();
     bLen = (int) B.length(); 
@@ -335,6 +338,7 @@ int main() {
     }
     findShortestPaths(0, aLen);
     cout << getShortestPathLength() << endl;
-    return 0;
+  }
+  return 0;
 }
 
