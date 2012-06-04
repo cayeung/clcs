@@ -66,11 +66,36 @@ void initializeMatrix() {
   }
 }
 
+void initializePaths(forwardPath* path) {
+
+    forwardPath *head = path;
+    for (int i = 0; i < bLen; i++) {
+      path->x = 0;
+      path->y = i;
+      forwardPath *newChild=new forwardPath;
+      path->child = newChild;
+      path = path->child;
+    }    
+    for (int j = 1; j < aLen; j++) {
+      path->x = j;
+      path->y = bLen-1;
+      forwardPath *newChild=new forwardPath;
+      path->child = newChild;
+      path = path->child;
+    }
+    path = head;
+}
+
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
-forwardPath singleShortestPath(int start, forwardPath *lowerPath, forwardPath *upperPath) {
-  
+forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* upperPath) {
+  if (lowerPath->x == -1) {
+    initializePaths(lowerPath);
+  }
+  if (upperPath->x == -1) {
+    initializePaths(upperPath);
+  }
   
   
   //implement way to make sure you dont check beyond upper/lower bound path
@@ -87,6 +112,7 @@ forwardPath singleShortestPath(int start, forwardPath *lowerPath, forwardPath *u
   }
   
   new_grid[start][0].cost = 0;
+
   
   forwardPath lower;
   forwardPath curr = *lowerPath;
@@ -97,6 +123,8 @@ forwardPath singleShortestPath(int start, forwardPath *lowerPath, forwardPath *u
     }
     curr = *(curr.child);
   }
+
+  
   forwardPath upper = *upperPath;
   
   forwardPath head;
@@ -105,6 +133,7 @@ forwardPath singleShortestPath(int start, forwardPath *lowerPath, forwardPath *u
   head.child = upperPath;
   upper = head;
   
+
   
   for (int i = start; i < aLen; i++) {
     while (lower.x == i) {
@@ -158,7 +187,6 @@ forwardPath singleShortestPath(int start, forwardPath *lowerPath, forwardPath *u
   
   forwardPath *answer = reverseList(&shortestPath);
 
-  
   return *answer;
 }
 
@@ -194,6 +222,11 @@ int main() {
   aLen = (int) A.length();
   bLen = (int) B.length(); 
   initializeMatrix();
+  for (int i = 0; i < 2001; i++) {
+    forwardPath temp;
+    temp.x = -1;
+    paths[i] = temp;
+  }
   findShortestPaths(aLen, bLen);
   cout << getShortestPathLength() << endl;
   return 0;
