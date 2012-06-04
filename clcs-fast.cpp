@@ -31,7 +31,7 @@ forwardPath * copyToPath(GridPoint *gp) {
 }
 
 /* reverses path of GridPoints and converts it to
- forward path of forwardPaths */
+ forward path of forwardPaths, the function puts a path as a linked list such that the source node is at the beginning and the destination is at the end*/
 forwardPath * reverseList(GridPoint *gp) {
     stack<GridPoint*> gpStack; 
     gpStack.push(gp);
@@ -63,6 +63,9 @@ forwardPath * reverseList(GridPoint *gp) {
 /* 
  initializes matrix and uses binary value to represent whether A and B match
  at specific spot 
+ 
+ if A[i] and B[i] match, matrix = 1
+ else matrix = 0
  */
 void initializeMatrix() {
     for (int i=0; i < (aLen); i++) {
@@ -86,7 +89,7 @@ void initializeMatrix() {
     }
 }
 
-//if the lower path does not exist, build the path along the midline down to the end corner
+//if the lower path does not exist, build the path along the midline down to the end corner (bottom right)
 void initializelower(forwardPath* lower, int start) {
     
     forwardPath *head = lower;
@@ -107,7 +110,11 @@ void initializelower(forwardPath* lower, int start) {
     
 }
 
-//if upper path does not exist, builds a path along the left boundary to the bottom
+/*if upper path does not exist, builds a path along the left boundary to the bottom left
+ 
+ this deals with the first case where we start with no boundaries or calculations but a midpoint. we therefore need to create the two boundaries to look at all the appropriate i's and j's starting at the midpoint
+ 
+ */
 void initializeUpper(forwardPath *upper, int start) {
     forwardPath *node = upper;
     for (int k = start; k < aLen+start+1; k++) {
@@ -129,6 +136,15 @@ void initializeUpper(forwardPath *upper, int start) {
 
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
+ 
+ we want to start looking from the midpoint (start) and across each row until we hit a boundary. we want to look only within the boundaries of the upper and lower paths
+ 
+ for each vertex, we want to look at the adjacent edges and determine whether moving across the current edge (current + 1) costs less than what is currently the shortest path for that adjacent edge. if the current edge would be less costly, we now want to store this cost and this vertex and the parent of the adjacent edge. 
+ 
+ this allows us to calculate a path from start that finds the least costly path where each crossing of an edge has a cost of 1. we will only check the diagonal if the two letters  matching (a subsequence)
+ 
+ we store these costs and nodes in a grid and return the node with the least cost (and its path)
+ 
  */
 forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* upperPath) {
     int upperbound;
@@ -219,16 +235,21 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
         else
             ubound=upper.y;
         for (int j=ubound; j<=lbound; j++) {
+          
+          //bottom adjacent edge
             if (new_grid[i+1][j].cost > new_grid[i][j].cost + 1) {
                 new_grid[i+1][j].cost = new_grid[i][j].cost + 1;
                 cout << "one" <<i+1 <<" "<< j <<" "<< new_grid[i+1][j].cost << endl;
                 new_grid[i+1][j].parent = &new_grid[i][j];
             }
+          //right adjacent edge
             if (new_grid[i][j+1].cost > new_grid[i][j].cost + 1) {
                 new_grid[i][j+1].cost = new_grid[i][j].cost + 1;
                 new_grid[i][j+1].parent = &new_grid[i][j];
                 cout <<"two"<< i <<" "<<j+1<< " "<< new_grid[i][j+1].cost << endl;
             }
+          
+          //diagonal (only checks if the two letters are matching
             if ((new_grid[i+1][j+1].cost > new_grid[i][j].cost + 1) && matrix[i][j] == 1) {
                 new_grid[i+1][j+1].cost = new_grid[i][j].cost + 1;
                 new_grid[i+1][j+1].parent = &new_grid[i][j];
@@ -291,7 +312,7 @@ int getShortestPathLength() {
     int min = numeric_limits<int>::max();
     for (int i = 0; i < aLen; i++) {
         //if (paths[i].x == -1) break; //check &paths[i] == NULL or this? if paths[0] or something in the middle doesnt get assigned, everything stops...
-        if (paths[i].x != -1) {
+        if (paths[i].x != -1) {   //calculates the length of the path
             int length = paths[i].cost;
             if (length < min) {
                 min = length;
