@@ -18,6 +18,8 @@ private:
     node **list;
     int max_elems;
     int get_parent(int current);
+    int get_left(int current);
+    int get_right(int current);
     int cmp_node(node *fst, node *snd);
     int count;
 public:
@@ -67,7 +69,9 @@ pqueue::cmp_node(node* fst, node *snd)
     return snd->length - fst->length;
 }
 
-int pqueue::get_parent(int current) { return (current/2) }
+int pqueue::get_parent(int current) { return ((current-1)/2) }
+int pqueue::get_left  (int current) { return ((current+1)*2 -1) }
+int pqueue::get_right (int current) { reutrn ((curretn+1)*2) }
 
 void
 pqueue::push(node *new_node)
@@ -85,6 +89,40 @@ pqueue::push(node *new_node)
         child = parent;
         parent = get_parent(child);
     }
+}
+
+node 
+*get_min()
+{
+    node *result = list[0]; 
+    list[0] = list[count--];
+    int current = 0;
+    int left = get_left(current);
+    int right= get_right(current);
+
+    while ((left < count && cmp_node(list[current], list[left])  <0 )||
+           (right < count && cmp_node(list[current], list[right])<0) ) {
+        int largest = left;
+        if (cmp_node(list[left], list[right]) < 0) {
+            largest = right;
+        }
+        node* temp;
+        temp = list[current];
+        list[current] = list[largest];
+        list[largest] = temp;
+        current = largest;
+        left = get_left(current);
+        right= get_right(current);
+
+   }
+
+
+}
+
+node 
+*look min()
+{
+    return list[0];
 }
 
 int dg_matrix::get_width (void) { return lenn; }
