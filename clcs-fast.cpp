@@ -43,9 +43,10 @@ void initializeMatrix() {
 /*
   modified dijkstra/BFS algorithm to find shortest path from each gridpoint
 */
-string singleShortestPath(int mid, string lower, string upper, GridPoint* grid[]) {
+string singleShortestPath(int mid, string lower, string upper) {
+  GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
-  //find shortest path from this grid point
+  //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
   return "";
 }
 
@@ -53,13 +54,12 @@ string singleShortestPath(int mid, string lower, string upper, GridPoint* grid[]
 161 Handout Pseudocode translated to c++.
 Fills paths array with shortest paths at each grid point. 
 */
-void findShortestPaths(int lower, int upper, GridPoint grid[][2000]) {
-  GridPoint new_grid[4000][2000];
+void findShortestPaths(int lower, int upper) {
   if ((upper - 1) <= 1) return;
   int mid = (lower + upper) / 2;
-  paths[mid] = singleShortestPath(mid, paths[lower], paths[upper], new_grid);
-  findShortestPaths(lower, mid, new_grid);
-  findShortestPaths(mid, upper, new_grid);
+  paths[mid] = singleShortestPath(mid, paths[lower], paths[upper]);
+  findShortestPaths(lower, mid);
+  findShortestPaths(mid, upper);
 }
 
 int getShortestPathLength() {
