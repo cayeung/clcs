@@ -23,7 +23,7 @@ string A, B;
 GridPoint new_grid[4000][2000];
 
 forwardPath * copyToPath(GridPoint *gp) {
-  forwardPath *fp = NULL;
+  forwardPath *fp = new forwardPath;
   fp->x = gp->x;
   fp->y = gp->y;
   return fp;
