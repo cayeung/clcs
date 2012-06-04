@@ -66,8 +66,8 @@ void initializeMatrix() {
   }
 }
 
-void initializePaths(forwardPath* lower, forwardPath *upper) {
-
+void initializelower(forwardPath* lower) {
+  
   forwardPath *head = lower;
   for (int i = 0; i < bLen; i++) {
     head->x = 0;
@@ -83,32 +83,37 @@ void initializePaths(forwardPath* lower, forwardPath *upper) {
     head->child = newChild;
     head = head->child;
   }
-
+  cout<<lower->child->child->x<<endl;
   
-  forwardPath *shead = upper;
-  for (int i = 0; i < aLen; i++) {
-    shead->x = i;
-    shead->y = 0;
-    forwardPath *newChild=new forwardPath;
-    shead->child = newChild;
-    shead = shead->child;
+}
+
+void initializeUpper(forwardPath *upper) {
+  forwardPath *node = upper;
+  for (int k = 0; k < aLen; k++) {
+    node->x = k;
+    node->y = 0;
+    forwardPath *uchild =new forwardPath;
+    node->child = uchild;
+    node = node->child;
   }    
   for (int j = 1; j < bLen; j++) {
-    shead->x = bLen - 1;
-    shead->y = j;
-    forwardPath *newChild=new forwardPath;
-    shead->child = newChild;
-    shead = shead->child;
+    node->x = bLen - 1;
+    node->y = j;
+    forwardPath *uchild =new forwardPath;
+    node->child = uchild;
+    node = node->child;
   }
+  
 }
 
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
 forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* upperPath) {
-
+  
   if (lowerPath->x == -1) {
-    initializePaths(lowerPath, upperPath);
+    initializelower(lowerPath);
+    initializeUpper(upperPath);
   }
   
   //implement way to make sure you dont check beyond upper/lower bound path
@@ -125,23 +130,25 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   }
   
   new_grid[start][0].cost = 0;
-
   
-  forwardPath lower;
+  
+  forwardPath l;
   forwardPath curr = *lowerPath;
-
+  
+  cout << lowerPath->child->child->x;
+  //exit(1);
+  
   while (true) {
     cout << curr.x;
     if (curr.x == start) {
       cout << start << endl;
       exit(1);
-      lower = curr;
+      l = curr;
       break;
     }
-    if (curr.x == 1) exit(1);
     curr = *(curr.child);
   }
-
+  
   exit(1);
   
   forwardPath upper = *upperPath;
@@ -152,20 +159,20 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   head.child = upperPath;
   upper = head;
   
-
+  
   
   for (int i = start; i < aLen; i++) {
-    while (lower.x == i) {
-      if (lower.child !=NULL)
-        lower = *(lower.child);
+    while (l.x == i) {
+      if (l.child !=NULL)
+        l = *(l.child);
       else {
-        lower.y=B.length();
+        l.y=B.length();
       }
     }
     while (upper.x==i) {
       upper = *(upper.child);
     }
-    for (int j=upper.y; j<lower.y; j++) {
+    for (int j=upper.y; j<l.y; j++) {
       
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + matrix[i+1][j]) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
@@ -182,10 +189,10 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
       if (j==aLen-1) 
         break;
     }
-    if (lower.child !=NULL)
-      lower=*(lower.child);
+    if (l.child !=NULL)
+      l=*(l.child);
     else 
-      lower.x=lower.x+1;
+      l.x=l.x+1;
     
     if (upper.child !=NULL)
       upper=*(upper.child);
@@ -205,7 +212,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   }
   
   forwardPath *answer = reverseList(&shortestPath);
-
+  
   return *answer;
 }
 
@@ -242,9 +249,9 @@ int main() {
   bLen = (int) B.length(); 
   initializeMatrix();
   for (int i = 0; i < 2001; i++) {
-    forwardPath temp;
-    temp.x = -1;
-    paths[i] = temp;
+    forwardPath* temp = new forwardPath;
+    temp->x = -1;
+    paths[i] = *temp;
   }
   findShortestPaths(aLen, bLen);
   cout << getShortestPathLength() << endl;
