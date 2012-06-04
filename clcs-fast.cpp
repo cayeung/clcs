@@ -61,11 +61,18 @@ string singleShortestPath(int start, GridPoint* lower, GridPoint* upper) {
 
   for (int i = start; i < A.length(); i++) {
     for (int j = 0; j < B.length(); j++) {
-      if (new_grid[i+1][j].cost < new_grid[i][j].cost + matrix[i+1][j]) {
-        new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
-        new_grid[i+1][j].parent = &new_grid[i][j];
-      }
-        
+        if (new_grid[i+1][j].cost < new_grid[i][j].cost + matrix[i+1][j]) {
+            new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
+            new_grid[i+1][j].parent = &new_grid[i][j];
+        }
+        if (new_grid[i][j+1].cost < new_grid[i][j].cost + matrix[i][j+1]) {
+            new_grid[i][j+1].cost = new_grid[i][j].cost + matrix[i][j+1];
+            new_grid[i][j+1].parent = &new_grid[i][j];
+        }
+        if (new_grid[i+1][j+1].cost < new_grid[i+1][j+1].cost + matrix[i+1][j+1]) {
+            new_grid[i+1][j+1].cost = new_grid[i+1][j+1].cost + matrix[i+1][j+1];
+            new_grid[i+1][j+1].parent = &new_grid[i][j];
+        }
 
     }
   }
