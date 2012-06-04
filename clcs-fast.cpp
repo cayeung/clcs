@@ -96,7 +96,7 @@ void initializeUpper(forwardPath *upper, int start) {
     node = node->child;
   }    
   for (int j = 1; j < bLen; j++) {
-    node->x = bLen - 1;
+    node->x = aLen + start - 1;
     node->y = j;
     forwardPath *uchild =new forwardPath;
     node->child = uchild;
@@ -135,8 +135,6 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   forwardPath l;
   forwardPath curr = *lowerPath;
   
-  //cout << start << endl;
-  
   while (true) {
     if (curr.x == start) {
       l = curr;
@@ -165,22 +163,21 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     while (upper.x==i) {
       upper = *(upper.child);
     }
-    for (int j=upper.y; j<l.y; j++) {
-      cout << "j is " << j << endl;
+    for (int j=upper.y; j<=l.y; j++) {
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + 1) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + 1;
-        cout << "one" <<i+1 << j << new_grid[i+1][j].cost << endl;
+        //cout << "one" <<i+1 << j << new_grid[i+1][j].cost << endl;
         new_grid[i+1][j].parent = &new_grid[i][j];
       }
       if (new_grid[i][j+1].cost > new_grid[i][j].cost + 1) {
         new_grid[i][j+1].cost = new_grid[i][j].cost + 1;
         new_grid[i][j+1].parent = &new_grid[i][j];
-        cout <<"two"<< i << j+1 << new_grid[i][j+1].cost << endl;
+       // cout <<"two"<< i << j+1 << new_grid[i][j+1].cost << endl;
       }
       if ((new_grid[i+1][j+1].cost > new_grid[i][j].cost + 1) && matrix[i+1][j+1] == 1) {
         new_grid[i+1][j+1].cost = new_grid[i][j].cost + 1;
         new_grid[i+1][j+1].parent = &new_grid[i][j];
-        cout <<"three"<< i+1 << j+1 << new_grid[i+1][j+1].cost << endl;
+       // cout <<"three"<< i+1 << j+1 << new_grid[i+1][j+1].cost << endl;
       }
       if (j==bLen-1) 
         break;
@@ -192,21 +189,15 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     
     if (upper.child !=NULL)
       upper=*(upper.child);
-   
-    cout << "i = " << i;
+
     
   }
  
   
   GridPoint shortestPath;
   shortestPath = new_grid[start+aLen-1][bLen-1];
-  cout << aLen+start << " " << bLen;
-  exit(1);
-  
-  
-  cout << endl<<shortestPath.x << shortestPath.y << endl;
-  exit(1);
-  
+  cout << shortestPath.x << " " << shortestPath.y << endl;
+
   forwardPath *answer = reverseList(&shortestPath);
 
   return *answer;
