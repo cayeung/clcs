@@ -10,7 +10,7 @@ struct GridPoint {
   int cost;
 };
 
-string paths[2000];
+GridPoint paths[2000];
 int matrix[4000][2000];
 string A, B;
 
@@ -80,6 +80,7 @@ GridPoint singleShortestPath(int start, GridPoint lower, GridPoint upper) {
   GridPoint shortestPath;
   shortestPath.cost = numeric_limits<int>::max();
   
+<<<<<<< HEAD
   for (int j = 0; j < B.length(); j++) {
     
     if (new_grid[A.length()-1][j].cost < shortestPath.cost) 
@@ -106,11 +107,7 @@ void findShortestPaths(int lower, int upper) {
 int getShortestPathLength() {
   int min = numeric_limits<int>::max();
   for (int i = 0; i < 2000; i++) {
-    if (paths[i].empty()) break;
-    int len = paths[i].length();
-    if (len < min) {
-      min = len;
-    }
+    //iterate through array and find cheapest path
   }
   return min;
 }
