@@ -7,8 +7,13 @@ using namespace std;
 
 struct GridPoint {
   GridPoint *parent;
-  int cost;
+  int cost, x,y;
 };
+
+struct forwardPath {
+  GridPoint *child;
+  int x,y;
+}
 
 GridPoint paths[2000];
 int matrix[4000][2000];
@@ -44,7 +49,7 @@ void initializeMatrix() {
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
-GridPoint singleShortestPath(int start, GridPoint lower, GridPoint upper) {
+GridPoint singleShortestPath(int start, GridPoint lowerPath, GridPoint upperPath) {
   GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
@@ -53,28 +58,49 @@ GridPoint singleShortestPath(int start, GridPoint lower, GridPoint upper) {
       GridPoint vertex;
       vertex.cost = numeric_limits<int>::max();
       vertex.parent = NULL;
+      vertex.x = i;
+      vertex.y = j;
       new_grid[i][j] = vertex;
     }
   }
   
   new_grid[start][0].cost = 0;
   
-  for (int i = start; i < A.length(); i++) {
-    for (int j = 0; j < B.length(); j++) {
-      if (new_grid[i+1][j].cost < new_grid[i][j].cost + matrix[i+1][j]) {
+  GridPoint lower;
+  while (curr != NULL) {
+    GridPoint curr = lowerPath;
+    if (curr.x = start) 
+      lower = curr;
+  }
+  GridPoint upper = upperPath;
+  if (upper.x != start) {
+    GridPoint head;
+    head.x = 0;
+    head.next = upperPath;
+    upper = head;
+  }
+  
+  for (int i = start; i < ; i++) {
+    for (int j = 0; j < lower.y; j++) {
+      if (new_grid[i+1][j].cost > new_grid[i][j].cost + matrix[i+1][j]) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
         new_grid[i+1][j].parent = &new_grid[i][j];
       }
-      if (new_grid[i][j+1].cost < new_grid[i][j].cost + matrix[i][j+1]) {
+      if (new_grid[i][j+1].cost > new_grid[i][j].cost + matrix[i][j+1]) {
         new_grid[i][j+1].cost = new_grid[i][j].cost + matrix[i][j+1];
         new_grid[i][j+1].parent = &new_grid[i][j];
       }
-      if (new_grid[i+1][j+1].cost < new_grid[i+1][j+1].cost + matrix[i+1][j+1]) {
+      if (new_grid[i+1][j+1].cost > new_grid[i+1][j+1].cost + matrix[i+1][j+1]) {
         new_grid[i+1][j+1].cost = new_grid[i+1][j+1].cost + matrix[i+1][j+1];
         new_grid[i+1][j+1].parent = &new_grid[i][j];
       }
       
     }
+    
+    while (lower.x = i) {
+      lower = lower.child;
+    }
+
   }
   
   GridPoint shortestPath;
