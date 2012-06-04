@@ -10,7 +10,7 @@ struct GridPoint {
   int cost;
 };
 
-string paths[2000];
+GridPoint paths[2000];
 int matrix[4000][2000];
 string A, B;
 
@@ -44,7 +44,7 @@ void initializeMatrix() {
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
-string singleShortestPath(int start, GridPoint* lower, GridPoint* upper) {
+GridPoint singleShortestPath(int start, GridPoint lower, GridPoint upper) {
   GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
@@ -78,7 +78,7 @@ string singleShortestPath(int start, GridPoint* lower, GridPoint* upper) {
   }
   
   
-  return "";
+  return new_grid[start][0]; /*filler*/
 }
 
 /*
@@ -96,11 +96,7 @@ void findShortestPaths(int lower, int upper) {
 int getShortestPathLength() {
   int min = numeric_limits<int>::max();
   for (int i = 0; i < 2000; i++) {
-    if (paths[i].empty()) break;
-    int len = paths[i].length();
-    if (len < min) {
-      min = len;
-    }
+    //iterate through array and find cheapest path
   }
   return min;
 }
