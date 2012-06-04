@@ -11,11 +11,12 @@ struct GridPoint {
 };
 
 struct forwardPath {
-  GridPoint *child;
+  forwardPath *child;
   int x,y;
-}
+  int endX, endY;
+};
 
-GridPoint paths[2000];
+forwardPath paths[2000];
 int matrix[4000][2000];
 string A, B;
 
@@ -49,7 +50,7 @@ void initializeMatrix() {
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
-GridPoint singleShortestPath(int start, GridPoint lowerPath, GridPoint upperPath) {
+forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upperPath) {
   GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
@@ -66,22 +67,28 @@ GridPoint singleShortestPath(int start, GridPoint lowerPath, GridPoint upperPath
   
   new_grid[start][0].cost = 0;
   
-  GridPoint lower;
-  while (curr != NULL) {
-    GridPoint curr = lowerPath;
-    if (curr.x = start) 
+  forwardPath lower;
+  forwardPath curr;
+  while (true) {
+    curr = lowerPath;
+    if (curr.x == start) {
       lower = curr;
+      break;
+    }
+    curr = *(curr.child);
   }
-  GridPoint upper = upperPath;
+  forwardPath upper = upperPath;
   if (upper.x != start) {
-    GridPoint head;
-    head.x = 0;
-    head.next = upperPath;
+    forwardPath head;
+    head.x = A.length();
+    head.y = 0;
+    head.child = &upperPath;
     upper = head;
   }
   
-  for (int i = start; i < ; i++) {
-    for (int j = 0; j < lower.y; j++) {
+  for (int i = start; i < A.length(); i++) {
+    int j=upper.y;
+    while (j < lower.y) {
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + matrix[i+1][j]) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
         new_grid[i+1][j].parent = &new_grid[i][j];
@@ -94,12 +101,23 @@ GridPoint singleShortestPath(int start, GridPoint lowerPath, GridPoint upperPath
         new_grid[i+1][j+1].cost = new_grid[i+1][j+1].cost + matrix[i+1][j+1];
         new_grid[i+1][j+1].parent = &new_grid[i][j];
       }
+      while (lower.x == i) {
+        if (lower.child !=NULL)
+          lower = *(lower.child);
+        else {
+          lower.y=B.length();
+          lower.child = &lower;
+        }
+      }
+      while (upper.x==i) {
+        upper = *(upper.child);
+      }
+      j=upper.y;
       
     }
     
-    while (lower.x = i) {
-      lower = lower.child;
-    }
+    if (j==A.length()) 
+      break;
 
   }
   
@@ -113,8 +131,9 @@ GridPoint singleShortestPath(int start, GridPoint lowerPath, GridPoint upperPath
     
   }
   
+  forwardPath temp;
   
-  return shortestPath;
+  return temp;
 }
 
 /*
