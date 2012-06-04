@@ -128,15 +128,15 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
       new_grid[i][j] = vertex;
     }
   }
-  
+
   new_grid[start][0].cost = 0;
   
   
   forwardPath l;
   forwardPath curr = *lowerPath;
-  
+
   cout << lowerPath->child->child->x;
-  //exit(1);
+  exit(1);
   
   while (true) {
     cout << curr.x;
@@ -249,11 +249,11 @@ int main() {
   bLen = (int) B.length(); 
   initializeMatrix();
   for (int i = 0; i < 2001; i++) {
-    forwardPath* temp = new forwardPath;
-    temp->x = -1;
-    paths[i] = *temp;
+    forwardPath temp;
+    temp.x = -1;
+    paths[i] = temp;
   }
-  findShortestPaths(aLen, bLen);
+  findShortestPaths(0, aLen);
   cout << getShortestPathLength() << endl;
   return 0;
 }
