@@ -296,4 +296,7 @@ main ()
 
     delete matrix;
     delete test;
+  
+  return 0;
+>>>>>>> 30426522385e5080a150ada0c19489350a696efc
 }

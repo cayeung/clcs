@@ -31,7 +31,7 @@ forwardPath * copyToPath(GridPoint *gp) {
 }
 
 /* reverses path of GridPoints and converts it to
- forward path of forwardPaths */
+ forward path of forwardPaths, the function puts a path as a linked list such that the source node is at the beginning and the destination is at the end*/
 forwardPath * reverseList(GridPoint *gp) {
     stack<GridPoint*> gpStack; 
     gpStack.push(gp);
@@ -63,9 +63,12 @@ forwardPath * reverseList(GridPoint *gp) {
 /* 
  initializes matrix and uses binary value to represent whether A and B match
  at specific spot 
+ 
+ if A[i] and B[i] match, matrix = 1
+ else matrix = 0
  */
 void initializeMatrix() {
-    for (int i=0; i < (aLen*2); i++) {
+    for (int i=0; i < (aLen); i++) {
         for (int j=0; j < bLen; j++) {
             if (A[i]==B[j]) {
                 matrix[i][j]=1;
@@ -74,9 +77,19 @@ void initializeMatrix() {
             }
         }
     }
+    for (int i=aLen; i<(aLen*2); i++){
+        for (int j=0; j<bLen; j++){
+            if (A[i-aLen]==B[j]){
+                matrix[i][j]=1;
+            }
+            else {
+                matrix[i][j]=0;
+            }
+        }
+    }
 }
 
-//if the lower path does not exist, build the path along the midline down to the end corner
+//if the lower path does not exist, build the path along the midline down to the end corner (bottom right)
 void initializelower(forwardPath* lower, int start) {
     
     forwardPath *head = lower;
@@ -97,7 +110,11 @@ void initializelower(forwardPath* lower, int start) {
     
 }
 
-//if upper path does not exist, builds a path along the left boundary to the bottom
+/*if upper path does not exist, builds a path along the left boundary to the bottom left
+ 
+ this deals with the first case where we start with no boundaries or calculations but a midpoint. we therefore need to create the two boundaries to look at all the appropriate i's and j's starting at the midpoint
+ 
+ */
 void initializeUpper(forwardPath *upper, int start) {
     forwardPath *node = upper;
     for (int k = start; k < aLen+start+1; k++) {
@@ -119,6 +136,15 @@ void initializeUpper(forwardPath *upper, int start) {
 
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
+ 
+ we want to start looking from the midpoint (start) and across each row until we hit a boundary. we want to look only within the boundaries of the upper and lower paths
+ 
+ for each vertex, we want to look at the adjacent edges and determine whether moving across the current edge (current + 1) costs less than what is currently the shortest path for that adjacent edge. if the current edge would be less costly, we now want to store this cost and this vertex and the parent of the adjacent edge. 
+ 
+ this allows us to calculate a path from start that finds the least costly path where each crossing of an edge has a cost of 1. we will only check the diagonal if the two letters  matching (a subsequence)
+ 
+ we store these costs and nodes in a grid and return the node with the least cost (and its path)
+ 
  */
 forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* upperPath) {
     int upperbound;
@@ -138,6 +164,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     
     //implement way to make sure you dont check beyond upper/lower bound path
     //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
+  //this could be optimized using a priority queue however we wrote up some code but did not manage to implement it
     for (int i = start; i < aLen+start+1; i++) {
         for (int j = 0; j< bLen+1; j++) {
             GridPoint vertex;
@@ -209,20 +236,25 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
         else
             ubound=upper.y;
         for (int j=ubound; j<=lbound; j++) {
+          
+          //bottom adjacent edge
             if (new_grid[i+1][j].cost > new_grid[i][j].cost + 1) {
                 new_grid[i+1][j].cost = new_grid[i][j].cost + 1;
-                cout << "one" <<i+1 <<" "<< j <<" "<< new_grid[i+1][j].cost << endl;
+                //cout << "one" <<i+1 <<" "<< j <<" "<< new_grid[i+1][j].cost << endl;
                 new_grid[i+1][j].parent = &new_grid[i][j];
             }
+          //right adjacent edge
             if (new_grid[i][j+1].cost > new_grid[i][j].cost + 1) {
                 new_grid[i][j+1].cost = new_grid[i][j].cost + 1;
                 new_grid[i][j+1].parent = &new_grid[i][j];
-                cout <<"two"<< i <<" "<<j+1<< " "<< new_grid[i][j+1].cost << endl;
+                //cout <<"two"<< i <<" "<<j+1<< " "<< new_grid[i][j+1].cost << endl;
             }
+          
+          //diagonal (only checks if the two letters are matching
             if ((new_grid[i+1][j+1].cost > new_grid[i][j].cost + 1) && matrix[i][j] == 1) {
                 new_grid[i+1][j+1].cost = new_grid[i][j].cost + 1;
                 new_grid[i+1][j+1].parent = &new_grid[i][j];
-                cout <<"three"<< i+1 <<" "<< j+1 <<" "<< new_grid[i+1][j+1].cost << endl;
+                //cout <<"three"<< i+1 <<" "<< j+1 <<" "<< new_grid[i+1][j+1].cost << endl;
             }
             if (j==bLen) 
                 break;
@@ -246,7 +278,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     //cout << shortestPath.x << " " << shortestPath.y << endl;
     
     forwardPath *answer = reverseList(&shortestPath);
-    cout << "----------" << endl;
+    //cout << "----------" << endl;
     
     forwardPath *newHead = answer;
     /*
@@ -266,7 +298,9 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
 void findShortestPaths(int lower, int upper) {
     if ((upper - lower) <= 1){
         if (paths[lower].child==NULL)
-            paths[lower]=singleShortestPath(lower, &paths[upper], &paths[lower]);
+            paths[lower]=singleShortestPath(lower, &paths[lower], &paths[upper]);
+        else if (paths[upper].child==NULL)
+            paths[upper]=singleShortestPath(upper,&paths[lower], &paths[upper]);
         return;
     }
     int mid = (lower + upper) / 2;
@@ -279,17 +313,20 @@ int getShortestPathLength() {
     int min = numeric_limits<int>::max();
     for (int i = 0; i < aLen; i++) {
         //if (paths[i].x == -1) break; //check &paths[i] == NULL or this? if paths[0] or something in the middle doesnt get assigned, everything stops...
-        if (paths[i].x != -1) {
+        if (paths[i].x != -1) {   //calculates the length of the path
             int length = paths[i].cost;
             if (length < min) {
                 min = length;
             }
         }
     }
-    return min;
+    return (aLen + bLen - min);
 }
 
 int main() {
+  int T;
+  cin >> T;
+  for (int tc = 0; tc < T; tc++) {
     cin >> A >> B;
     aLen = (int) A.length();
     bLen = (int) B.length(); 
@@ -301,6 +338,7 @@ int main() {
     }
     findShortestPaths(0, aLen);
     cout << getShortestPathLength() << endl;
-    return 0;
+  }
+  return 0;
 }
 
