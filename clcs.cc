@@ -2,14 +2,20 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
-#include <stack>
 #include <cstring>
 #include <cstdio>
+
+typedef struct path {
+    path *prev;
+    int x;
+    int y;
+} path;
 
 typedef struct node {
     int length;
     int x;
     int y;
+    path *cur_path;
     int lcs;
 } node;
 
@@ -28,7 +34,7 @@ public:
 
     void push(node *new_node);
     node *get_min();
-    node *look min();
+    node *look_min();
 
 };
 
@@ -40,9 +46,10 @@ private:
     int lenm;
     int lenn;
     int get_location(int x, int y);
+
 public:
 
-    dg_matrix(string first, string second);
+    dg_matrix(const char *first, const char *second);
     ~dg_matrix();
 
     bool has_diagonal(int x, int y);
@@ -69,9 +76,9 @@ pqueue::cmp_node(node* fst, node *snd)
     return snd->length - fst->length;
 }
 
-int pqueue::get_parent(int current) { return ((current-1)/2) }
-int pqueue::get_left  (int current) { return ((current+1)*2 -1) }
-int pqueue::get_right (int current) { return ((curretn+1)*2) }
+int pqueue::get_parent(int current) { return ((current-1)/2); }
+int pqueue::get_left  (int current) { return ((current+1)*2 -1); }
+int pqueue::get_right (int current) { return ((current+1)*2); }
 
 void
 pqueue::push(node *new_node)
@@ -92,7 +99,7 @@ pqueue::push(node *new_node)
 }
 
 node 
-*get_min()
+*pqueue::get_min()
 {
     node *result = list[0]; 
     list[0] = list[count--];
@@ -121,7 +128,7 @@ node
 }
 
 node 
-*look min()
+*pqueue::look_min()
 {
     return list[0];
 }
@@ -134,21 +141,21 @@ dg_matrix::get_location (int x, int y)
     return (x * lenn + y);
 }
 
-dg_matrix::dg_matrix(string first, string second)
+dg_matrix::dg_matrix(const char* first, const char* second)
 {
-    lenm = first.length();
-    lenn = second.length();
+    lenm = strlen(first);
+    lenn = strlen(second);
     //allocate strings
-    stringm = (char *)malloc (len1 *2 +1);
-    stringn = (char *)malloc (len2 +1);
+    stringm = (char *)malloc (lenm *2 +1);
+    stringn = (char *)malloc (lenn +1);
     //move strings over, double one of them
-    sprintf(stringm, "%s%s", first.c_str(), first.c_str());
-    stringn = second.c_str();
+    sprintf(stringm, "%s%s", first, first);
+    strcpy(stringn,second);
 
     lenm *=2;
 
     //allocate diagonal matrix
-    graph_mat = (int *)malloc (2 * len1 * len2 * sizeof(int));
+    graph_mat = (int *)malloc (2 * lenm * lenn * sizeof(int));
 
     // initialize last row/col
     for (int i = 0; i < lenn; ++i) graph_mat[get_location(lenm-1, i)] = 0;
@@ -170,4 +177,15 @@ dg_matrix::~dg_matrix()
     free(graph_mat);
 }
 
+int 
+main ()
+{
+    std::string A;
+    std::string B;
+    std::cin >> A >> B;
+    dg_matrix *matrix = new dg_matrix(A.c_str(), B.c_str());
+    pqueue *test = new pqueue(24);
 
+    delete matrix;
+    delete test;
+}
