@@ -66,37 +66,50 @@ void initializeMatrix() {
   }
 }
 
-void initializePaths(forwardPath* path) {
+void initializePaths(forwardPath* lower, forwardPath *upper) {
 
-    forwardPath *head = path;
-    for (int i = 0; i < bLen; i++) {
-      path->x = 0;
-      path->y = i;
-      forwardPath *newChild=new forwardPath;
-      path->child = newChild;
-      path = path->child;
-    }    
-    for (int j = 1; j < aLen; j++) {
-      path->x = j;
-      path->y = bLen-1;
-      forwardPath *newChild=new forwardPath;
-      path->child = newChild;
-      path = path->child;
-    }
-    path = head;
+  forwardPath *head = lower;
+  for (int i = 0; i < bLen; i++) {
+    head->x = 0;
+    head->y = i;
+    forwardPath *newChild=new forwardPath;
+    head->child = newChild;
+    head = head->child;
+  }    
+  for (int j = 1; j < aLen; j++) {
+    head->x = j;
+    head->y = bLen-1;
+    forwardPath *newChild=new forwardPath;
+    head->child = newChild;
+    head = head->child;
+  }
+
+  
+  forwardPath *shead = upper;
+  for (int i = 0; i < aLen; i++) {
+    shead->x = i;
+    shead->y = 0;
+    forwardPath *newChild=new forwardPath;
+    shead->child = newChild;
+    shead = shead->child;
+  }    
+  for (int j = 1; j < bLen; j++) {
+    shead->x = bLen - 1;
+    shead->y = j;
+    forwardPath *newChild=new forwardPath;
+    shead->child = newChild;
+    shead = shead->child;
+  }
 }
 
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
 forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* upperPath) {
+
   if (lowerPath->x == -1) {
-    initializePaths(lowerPath);
+    initializePaths(lowerPath, upperPath);
   }
-  if (upperPath->x == -1) {
-    initializePaths(upperPath);
-  }
-  
   
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
@@ -116,14 +129,20 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
   
   forwardPath lower;
   forwardPath curr = *lowerPath;
+
   while (true) {
+    cout << curr.x;
     if (curr.x == start) {
+      cout << start << endl;
+      exit(1);
       lower = curr;
       break;
     }
+    if (curr.x == 1) exit(1);
     curr = *(curr.child);
   }
 
+  exit(1);
   
   forwardPath upper = *upperPath;
   
