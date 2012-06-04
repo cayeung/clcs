@@ -168,3 +168,8 @@ dg_matrix::~dg_matrix()
     free(stringn);
     free(graph_mat);
 }
+
+int main() {
+  
+  return 0;
+}

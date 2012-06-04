@@ -154,6 +154,7 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     
     //implement way to make sure you dont check beyond upper/lower bound path
     //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
+  //this could be optimized using a priority queue however we wrote up some code but did not manage to implement it
     for (int i = start; i < aLen+start+1; i++) {
         for (int j = 0; j< bLen+1; j++) {
             GridPoint vertex;
