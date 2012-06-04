@@ -29,7 +29,7 @@ forwardPath * copyToPath(GridPoint *gp) {
 }
 
 /* reverses path of GridPoints and converts it to
-forward path of forwardPaths */
+ forward path of forwardPaths */
 forwardPath * reverseList(GridPoint *gp) {
   stack<GridPoint*> gpStack; 
   gpStack.push(gp);
@@ -115,7 +115,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
       upper = *(upper.child);
     }
     for (int j=upper.y; j<lower.y; j++) {
-
+      
       if (new_grid[i+1][j].cost > new_grid[i][j].cost + matrix[i+1][j]) {
         new_grid[i+1][j].cost = new_grid[i][j].cost + matrix[i+1][j];
         new_grid[i+1][j].parent = &new_grid[i][j];
@@ -138,16 +138,14 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
     
     if (upper.child !=NULL)
       upper=*(upper.child);
-    
-    
 
     
   }
   
   GridPoint shortestPath;
   shortestPath.cost = numeric_limits<int>::max();
-
-
+  
+  
   for (int j = 0; j < bLen; j++) {
     
     if (new_grid[aLen-1][j].cost < shortestPath.cost) 
@@ -155,9 +153,9 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
     
   }
   
-  forwardPath temp;
+  forwardPath *answer = reverseList(&shortestPath);
   
-  return temp;
+  return *answer;
 }
 
 /*
