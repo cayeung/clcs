@@ -23,7 +23,7 @@ string A, B;
 GridPoint new_grid[4000][2000];
 
 forwardPath * copyToPath(GridPoint *gp) {
-  forwardPath *fp = NULL;
+  forwardPath *fp = new forwardPath;
   fp->x = gp->x;
   fp->y = gp->y;
   return fp;
@@ -139,14 +139,14 @@ forwardPath singleShortestPath(int start, forwardPath* lowerPath, forwardPath* u
     cout << curr.x;
     if (curr.x == start) {
       cout << start << endl;
-      exit(1);
+      //exit(1);
       l = curr;
       break;
     }
     curr = *(curr.child);
   }
   
-  exit(1);
+  //exit(1);
   
   forwardPath upper = *upperPath;
   
