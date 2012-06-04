@@ -65,11 +65,9 @@ void findShortestPaths(int lower, int upper) {
 
 int getShortestPathLength() {
   int min = numeric_limits<int>::max();
-  for (int i = 0; i < 2000; i++) {
-    if (paths[i].empty()) break;
-    int len = paths[i].length();
-    if (len < min) {
-      min = len;
+  for (int i = 0; i < paths.size(); i++) {
+    if (paths[i] < min) {
+      min = paths[i];
     }
   }
   return min;
