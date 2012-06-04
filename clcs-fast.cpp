@@ -16,10 +16,11 @@ struct forwardPath {
   int x,y;
 };
 
-forwardPath paths[2000];
-int matrix[4000][2000];
+forwardPath paths[2001];
+int matrix[4001][2001];
 int aLen, bLen;
 string A, B;
+GridPoint new_grid[4000][2000];
 
 forwardPath * copyToPath(GridPoint *gp) {
   forwardPath *fp = NULL;
@@ -68,8 +69,10 @@ void initializeMatrix() {
 /*
  modified dijkstra/BFS algorithm to find shortest path from each gridpoint
  */
-forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upperPath) {
-  GridPoint new_grid[4000][2000];
+forwardPath singleShortestPath(int start, forwardPath *lowerPath, forwardPath *upperPath) {
+  
+  
+  
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
   for (int i = start; i < aLen; i++) {
@@ -86,7 +89,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
   new_grid[start][0].cost = 0;
   
   forwardPath lower;
-  forwardPath curr = lowerPath;
+  forwardPath curr = *lowerPath;
   while (true) {
     if (curr.x == start) {
       lower = curr;
@@ -94,12 +97,12 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
     }
     curr = *(curr.child);
   }
-  forwardPath upper = upperPath;
+  forwardPath upper = *upperPath;
   
   forwardPath head;
-  head.x = upperPath.x;
+  head.x = upperPath->x;
   head.y = 0;
-  head.child = &upperPath;
+  head.child = upperPath;
   upper = head;
   
   
@@ -138,7 +141,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
     
     if (upper.child !=NULL)
       upper=*(upper.child);
-
+    
     
   }
   
@@ -154,6 +157,7 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
   }
   
   forwardPath *answer = reverseList(&shortestPath);
+
   
   return *answer;
 }
@@ -165,14 +169,14 @@ forwardPath singleShortestPath(int start, forwardPath lowerPath, forwardPath upp
 void findShortestPaths(int lower, int upper) {
   if ((upper - 1) <= 1) return;
   int mid = (lower + upper) / 2;
-  paths[mid] = singleShortestPath(mid, paths[lower], paths[upper]);
+  paths[mid] = singleShortestPath(mid, &paths[lower], &paths[upper]);
   findShortestPaths(lower, mid);
   findShortestPaths(mid, upper);
 }
 
 int getShortestPathLength() {
   int min = numeric_limits<int>::max();
-  for (int i = 0; i < 2000; i++) {
+  for (int i = 0; i < 2001; i++) {
     if (&paths[i] == NULL) break; 
     int length = 0;
     for (forwardPath *fp = &paths[i]; fp != NULL; fp = fp->child) {
