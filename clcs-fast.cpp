@@ -79,8 +79,7 @@ GridPoint singleShortestPath(int start, GridPoint lower, GridPoint upper) {
   
   GridPoint shortestPath;
   shortestPath.cost = numeric_limits<int>::max();
-  
-<<<<<<< HEAD
+
   for (int j = 0; j < B.length(); j++) {
     
     if (new_grid[A.length()-1][j].cost < shortestPath.cost) 
