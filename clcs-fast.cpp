@@ -5,10 +5,10 @@
 
 using namespace std;
 
-struct GridPoint {
-  string path; 
+struct Gridpoint {
+  Gridpoint *parent;
   int cost;
-};
+}
 
 string paths[2000];
 int matrix[4000][2000];
@@ -44,10 +44,29 @@ void initializeMatrix() {
 /*
   modified dijkstra/BFS algorithm to find shortest path from each gridpoint
 */
-string singleShortestPath(int mid, string lower, string upper) {
+string singleShortestPath(int start, Gridpoint* lower, Gridpoint* upper) {
   GridPoint new_grid[4000][2000];
   //implement way to make sure you dont check beyond upper/lower bound path
   //find shortest path from this grid point using a shortest path algorithm for directed acyclic graph
+  for (int i = start; i < A.length(); i++) {
+    for (int j = 0; i<B.length(); j++) {
+      Gridpoint vertex;
+      vertex.cost = numeric_limits<int>::max();
+      vertex.parent = NULL;
+    }
+  }
+
+  new_grid[start][0].cost = 0;
+
+  for (int i = start; i < A.length(); i++) {
+    for (int j = 0; j < B.length(); j++) {
+
+      
+
+    }
+  }
+  
+
   return "";
 }
 
